@@ -1,21 +1,15 @@
 package com.itblee.core.server.impl;
 
 import com.itblee.core.server.Gate;
-import com.itblee.core.server.util.ServerPropertyUtil;
 import com.itblee.core.server.constant.ServerConstant;
+import com.itblee.core.server.util.ServerPropertyUtil;
 import com.itblee.security.SSLFactories;
-import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.ServerException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.util.Base64;
 
 public class SecureGate extends GateImpl implements Gate {
 
@@ -37,15 +31,15 @@ public class SecureGate extends GateImpl implements Gate {
         if (isOpened())
             throw new ServerException("Already opened Server !");
         try {
-            addProvider();
+            loadKeyStore();
         } catch (Exception e) {
             throw new SecurityException("Fail to apply SSL: ", e);
         }
         serverSocket = InstanceHolder.serverSocketFactory.createServerSocket(port);
     }
 
-    private void addProvider() throws Exception {
-        java.security.Security.addProvider(new Provider());
+    private void loadKeyStore() throws Exception {
+        //java.security.Security.addProvider(new Provider());
         String keyStorePath = ServerConstant.RESOURCE_PATH + ServerPropertyUtil.getString("jsse.keystore.path");
         InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(keyStorePath);

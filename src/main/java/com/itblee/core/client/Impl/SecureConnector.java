@@ -1,10 +1,9 @@
 package com.itblee.core.client.Impl;
 
-import com.itblee.core.client.util.ClientPropertyUtil;
 import com.itblee.core.client.Connector;
 import com.itblee.core.client.constant.ClientConstant;
+import com.itblee.core.client.util.ClientPropertyUtil;
 import com.itblee.security.SSLFactories;
-import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
@@ -34,7 +33,7 @@ public class SecureConnector extends ConnectorImpl implements Connector {
     public SSLSocket connect() throws IOException {
         if (socket == null) {
             try {
-                addProvider();
+                loadTrustStore();
             } catch (Exception e) {
                 throw new SecurityException("Fail to apply SSL: ", e);
             }
@@ -46,8 +45,8 @@ public class SecureConnector extends ConnectorImpl implements Connector {
         return (SSLSocket) socket;
     }
 
-    private void addProvider() throws Exception {
-        java.security.Security.addProvider(new Provider());
+    private void loadTrustStore() throws Exception {
+        //java.security.Security.addProvider(new Provider());
         String trustStorePath = ClientConstant.RESOURCE_PATH + ClientPropertyUtil.getString("jsse.truststore.path");
         InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(trustStorePath);

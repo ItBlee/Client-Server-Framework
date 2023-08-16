@@ -3,6 +3,9 @@
 ### Introduction
 Provides a comprehensive programming and configuration model for Client-Server applications
 
+### Technologies Used
+Java Networking, TCP/IP, Java Multithreading, Java Secure Socket Extension (SSL), GSON
+
 ### List of features
 * Establish a **two-way communication channel** between server and client
 * Handling **multiple clients** asynchronously on server

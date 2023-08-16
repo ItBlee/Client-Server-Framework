@@ -69,7 +69,7 @@ Controller example = new Controller() {{
         Optional<Message> message = data.get(MyDataKey.MESSAGE_BODY, Message.class);
         if (!message.isPresent())
             return;
-        MyServerService service = (MyServerService) server.getService();
+        MyServerService service = (MyServerService) Server.getinstance().getService();
         try {
             service.syncMessage(worker.getUid(), message.get());
         } catch (UnauthenticatedException e) {

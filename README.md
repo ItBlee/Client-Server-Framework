@@ -14,6 +14,7 @@ Provides a comprehensive programming and configuration model for Client-Server a
 
 ### Use
 
+* In Client side:
 ```java
 //init Client
 Client client = Client.init(ip, port, sslPort);

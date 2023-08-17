@@ -62,23 +62,52 @@ server.shutdown();
 ```
 
 * Request Mapping:
-```java
-//EXAMPLE
-Controller example = new Controller() {{
-    map(MyRequest.SEND_MESSAGE, (worker, data) -> {
-        Optional<Message> message = data.get(MyDataKey.MESSAGE_BODY, Message.class);
-        if (!message.isPresent())
-            return;
-        MyServerService service = (MyServerService) Server.getinstance().getService();
-        try {
-            service.syncMessage(worker.getUid(), message.get());
-        } catch (UnauthenticatedException e) {
-            TransferHelper.call(worker).warnUnauthenticated();
-        }
-    });
-}};
-server.addController(example);
-```
+  - The standard communication is structured as
+    ```java
+    Packet {
+        Request request;
+        StatusCode code;
+        String message;
+        Map<DataKey, ?> data;
+    }
+    ```
+  - So first, declare what you need for both Client and Server
+    ```java
+    //EXAMPLE
+    public enum MyRequest implements Request {
+        SEND_MESSAGE
+    }    
+    public enum MyDataKey implements DataKey {
+        MESSAGE_BODY
+    }
+    public enum MyStatusCode implements StatusCode {
+    }
+    ```
+  - Then 
+    ```java
+    //EXAMPLE SEND REQUEST IN CLIENT SIDE
+    Packet request = new Packet();
+    request.setHeader(MyRequest.SEND_MESSAGE);
+    request.putData(MyDataKey.MESSAGE_BODY, message);
+    String msg = JsonParser.toJson(request);
+    Client.getInstance().getWorker().send(msg);
+    
+    //EXAMPLE CATCH REQUEST IN SERVER SIDE
+    Controller example = new Controller() {{
+        map(MyRequest.SEND_MESSAGE, (worker, data) -> {
+            Optional<Message> message = data.get(MyDataKey.MESSAGE_BODY, Message.class);
+            if (!message.isPresent())
+                return;
+            MyServerService service = (MyServerService) Server.getinstance().getService();
+            try {
+                service.syncMessage(worker.getUid(), message.get());
+            } catch (UnauthenticatedException e) {
+                TransferHelper.call(worker).warnUnauthenticated();
+            }
+        });
+    }};
+    server.addController(example);
+    ```
 
 ## Screenshots
 
